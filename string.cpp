@@ -1,36 +1,44 @@
-#include <stddef.h>
+
 #include <iostream>
-#include "String.h"
+#include <stddef.h>
+#include <cstring>
+#include "string.h"
+using namespace std;
 
-
-String::String():data(NULL), length(0){} //we need to check that;
+String::String():data(NULL), length(0){
+	cout<<"empty"<<endl;
+} //we need to check that;
 
 String::String(const String &str){
-	if (str->data == NULL){
+	if (str.data == NULL){
 		data = NULL;
 		length = 0;
 	}else{
-	data = new char[sizeof(str->data)+1];
-	strcpy(data,str->data);
-	length = str.length;	
+	data = new char[str.length];
+	strcpy(data,str.data);
+	length = str.length;
+	cout<<data<<endl;
+	cout<<length<<endl;	
 	}
 	
 }
 
 
 String::String(const char *str){
-	if (str->data == NULL){
+	if (str == NULL){
 		data = NULL;
 		length = 0;
 	}else{
-	data = new char[sizeof(str)+1];
+	data = new char[strlen(str)];
 	strcpy(data,str);
-	length = sizeof(str)+1;
+	length = strlen(this->data);
+	cout<<data<<endl;
+	cout<<length<<endl;
 	}
 }
 
 
-String::~String(const char *str){
+String::~String(){
 	if (NULL != this->data){
 		delete[] data;
 	}
@@ -38,92 +46,95 @@ String::~String(const char *str){
 
 String& String::operator=(const String &rhs){
 	if (NULL != this->data){
-		~Strings(this->data);
+		delete[] data;
 	}
 
-    if (rhs->data == NULL){	
+    if (rhs.data == NULL){	
 		data = NULL;
 		length = 0;
 	}else{
-	this->data = new char[sizeof(rhs->data)+1];
-	strcpy(data,rhs->data);
-	this.length = sizeof(rhs->data)+1;
+	this->data = new char[sizeof(rhs.data)+1];
+	strcpy(data,rhs.data);
+	this->length = sizeof(rhs.data)+1;
 	}	
 
 	return *this;
 }
 
 
-bool String::equals(const String &rhs){
-	int x = strcmp(rhs->data,this->data);
+bool String::equals(const String &rhs) const{
+	int x = strcmp(rhs.data,this->data);
 	if (x == 0){
-		return TRUE;
+		return true;
 	}
-	return FALSE;
+	return false;
 }
 
-bool String::equals(const char *rhs){
+bool String::equals(const char *rhs) const{
 	int x = strcmp(rhs,this->data);
 	if (x == 0){
-		return TRUE;
+		return true;
 	}
 
-	return FALSE;
+	return false;
 }
 
 void String::split(const char *delimiters, String **output, size_t *size) const{
-	if (this->data == NULL || delimiters = NULL || output == NULL){
+	if (this->data == NULL || delimiters == NULL || output == NULL){
 		return;
 	}
-
-	int numOfStrings = 0
-	 for(j = 0; '\n' != this->data[j]; j++){
-	 	for(i = 0; '\n' != delimiters[i]; i++){
-	 		if (delimiters[i] == data[j]){
-	 			counter +=1;
+	char tmp[length];
+	strcpy(tmp,data);
+	int numOfStrings = 0;
+	 for(int j = 0; '\n' != tmp[j]; j++){
+	 	for(int i = 0; '\n' != delimiters[i]; i++){
+	 		if (delimiters[i] == tmp[j]){
+	 			numOfStrings +=1;
 	 		}
 	 	}
 	 }
 
-	if (counter != 0){
-		String *list = new String[counter];
+	if (numOfStrings != 0){
+		*output = new String[numOfStrings];
 	}
-	int right = 0;
+	
 	int left = 0;
 	int index = 0;
-	 for(j = 0; '\n' != this->data[j]; j++){
-	 	for(i = 0; '\n' != delimiters[i]; i++){
-	 		if (delimiters[i] == data[j]){
-	 			this->data[j] = '\n'
-	 			list[index] = String(data[left]);
+	 for(int j = 0; '\n' != tmp[j]; j++){
+	 	for(int i = 0; '\n' != delimiters[i]; i++){
+	 		if (delimiters[i] == tmp[j]){
+	 			tmp[j] = '\n';
+	 			(*output)[index] =String(&tmp[left]);
 	 			left = j+1;
 	 		}
 	 	}
 	}
+
+	return;
 }
 
 int String::to_integer() const{
 	return atoi(this->data);
 }
 
- String trim() const{
- 	if(data = NULL){
- 		return;
+ String String::trim() const{
+ 	if(data == NULL){
+ 		return String();
  	}
  	char tmp[length];
 	strcpy(tmp,data);
 	int counterLeft = 0;
 	int counterRight = 0;
-	for (i = 0; tmp[i] == ''; i++){
+	for (int i = 0; tmp[i] == ' '; i++){
 		counterLeft+=1;
 	}
 
-	for (i = length; tmp[i] == ''; i--){
+	for (int i = length; tmp[i] == ' '; i--){
 		counterRight+=1;
 	}
 
 	tmp[counterRight] = '\n';
-	return String(tmp[counterLeft]);
+	return String(&tmp[counterLeft]);
  }
 
 
