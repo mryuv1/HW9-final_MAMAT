@@ -6,7 +6,7 @@
 using namespace std;
 
 String::String():data(NULL), length(0){
-	cout<<"empty"<<endl;
+	cout<<"empty String"<<endl;
 } //we need to check that;
 
 String::String(const String &str){
@@ -17,23 +17,22 @@ String::String(const String &str){
 	data = new char[str.length];
 	strcpy(data,str.data);
 	length = str.length;
-	cout<<data<<endl;
-	cout<<length<<endl;	
+	cout<<data<<" length:"<< length << " ," << "new String" <<endl;
 	}
 	
 }
 
 
 String::String(const char *str){
-	if (str == NULL){
+	if (str == NULL || strlen(str) == 0){
 		data = NULL;
 		length = 0;
+		cout<<"empty2"<<endl;
 	}else{
 	data = new char[strlen(str)];
 	strcpy(data,str);
 	length = strlen(this->data);
-	cout<<data<<endl;
-	cout<<length<<endl;
+	cout<<data<<" length:"<< length << " ," << "new String" <<endl;
 	}
 }
 
@@ -85,27 +84,35 @@ void String::split(const char *delimiters, String **output, size_t *size) const{
 	}
 	char tmp[length];
 	strcpy(tmp,data);
-	int numOfStrings = 0;
-	 for(int j = 0; '\n' != tmp[j]; j++){
-	 	for(int i = 0; '\n' != delimiters[i]; i++){
+	size_t numOfStrings = 1;
+	 for(int j = 0; '\0' != tmp[j]; j++){
+	 	for(int i = 0; '\0' != delimiters[i]; i++){
 	 		if (delimiters[i] == tmp[j]){
 	 			numOfStrings +=1;
 	 		}
 	 	}
 	 }
 
+	 *size = numOfStrings;
+	 
 	if (numOfStrings != 0){
 		*output = new String[numOfStrings];
 	}
-	
+	cout<<numOfStrings<<endl;
 	int left = 0;
 	int index = 0;
-	 for(int j = 0; '\n' != tmp[j]; j++){
-	 	for(int i = 0; '\n' != delimiters[i]; i++){
+	 for(int j = 0; '\0' != tmp[j]; j++){
+	 	for(int i = 0; '\0' != delimiters[i]; i++){
 	 		if (delimiters[i] == tmp[j]){
-	 			tmp[j] = '\n';
+	 			tmp[j] = '\0';
 	 			(*output)[index] =String(&tmp[left]);
 	 			left = j+1;
+	 			index+=1;
+	 			cout<<length<<endl;
+
+	 		}else if ('\0' == tmp[j+1]){
+	 			(*output)[index] =String(&tmp[left]);
+	 			return;
 	 		}
 	 	}
 	}
@@ -133,7 +140,7 @@ int String::to_integer() const{
 		counterRight+=1;
 	}
 
-	tmp[counterRight] = '\n';
+	tmp[counterRight] = '\0';
 	return String(&tmp[counterLeft]);
  }
 
