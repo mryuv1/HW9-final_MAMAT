@@ -4,9 +4,42 @@
 #include "string.h"
 #include "port.h"
 #include "ip.h"
-using namespace std;
 
-//debug only for strings
+using namespace std;
+extern int check_args(int,char*);
+extern void parse_input(Field&);
+
+#if 1
+
+int main(int argc, char *argv[]){
+	
+	if (check_args(argc,*argv) != 0){
+		cout<<"err_arg"<<endl;
+		return 0;
+	}
+
+	String mask(argv[0]);
+	char delimiters[] = "-=";
+	String *subMask;
+	size_t sizes;
+
+	mask.split(delimiters, &subMask, &sizes);
+
+	if(subMask[1].equals(String("ip"))){
+		Ip maskIp(subMask[2]);
+		parse_input((Field&)maskIp);
+	}else if(subMask[1].equals(String("port"))){
+		Port maskPort(subMask[2]);
+		parse_input((Field&)maskPort);
+	}
+
+	delete []subMask;
+
+    return 0;
+}
+
+#endif
+
 #if 0
 int main()
 {
@@ -28,14 +61,6 @@ int main()
 	char test[] = "hi there";
 	cout<<test<<endl;
 
-    return 0;
-}
-
-#endif 
-
-int main()
-{
-	
 	String ip("src-ip=3.3.3.3");
 	String port2("port=40");
 
@@ -60,3 +85,4 @@ int main()
 
     return 0;
 }
+#endif 

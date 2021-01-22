@@ -5,6 +5,7 @@
 #include "port.h"
 #include "field.h"
 
+
 Field::Field(String pattern, field_type type):pattern(pattern), type(type){}
 
 Field::Field(String pattern):pattern(pattern),type(GENERIC){}
