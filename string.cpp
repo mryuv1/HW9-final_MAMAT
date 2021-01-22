@@ -136,7 +136,7 @@ int String::to_integer() const{
 		counterLeft+=1;
 	}
 
-	for (int i = length; tmp[i] == ' '; i--){
+	for (int i = length-1; tmp[i] == ' '; i--){
 		counterRight+=1;
 	}
 

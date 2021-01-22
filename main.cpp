@@ -9,7 +9,7 @@ using namespace std;
 extern int check_args(int,char*);
 extern void parse_input(Field&);
 
-#if 1
+#if 0
 
 int main(int argc, char *argv[]){
 	
@@ -40,7 +40,7 @@ int main(int argc, char *argv[]){
 
 #endif
 
-#if 0
+#if 1
 int main()
 {
 	String a("  yuval mayor    "), b(" amir, gildor,,,  mai, yael,yarden, 32     "), c("1993");
@@ -54,9 +54,9 @@ int main()
 	cout<<(c.equals("1993"))<<endl;
 		cout<<size<<endl;
 
-	String g = output[0].trim();	
+	cout<<(output[7].trim().to_integer())*3<<endl;
 
-
+	if(0){
 	//cout<<(output[3].to_integer())*2<<endl;
 	char test[] = "hi there";
 	cout<<test<<endl;
@@ -81,7 +81,7 @@ int main()
 	cout<<"match 111"<<endl;
 	cout<<"should be false:"<<statement1<<endl;
 	cout<<"should be true:" << statement2<< endl;
-
+	}
 
     return 0;
 }
