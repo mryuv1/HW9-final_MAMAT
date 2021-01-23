@@ -23,8 +23,8 @@ bool Port::set_value(String val){
 		return false;
 	}
 
-	range[0] =output[0].to_integer();
-	range[1] = output[1].to_integer();
+	range[0] =output[0].trim().to_integer();
+	range[1] = output[1].trim().to_integer();
 
 	delete []output;
 
@@ -32,7 +32,7 @@ bool Port::set_value(String val){
 }
 
 bool Port::match_value(String val) const{
-	int value = val.to_integer();
+	int value = val.trim().to_integer();
 
 	if (value > range[0] && value < range[1]){
 		return true;

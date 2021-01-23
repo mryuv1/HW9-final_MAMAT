@@ -52,9 +52,9 @@ String& String::operator=(const String &rhs){
 		data = NULL;
 		length = 0;
 	}else{
-	this->data = new char[sizeof(rhs.data)+1];
+	this->data = new char[strlen(rhs.data)];
 	strcpy(data,rhs.data);
-	this->length = sizeof(rhs.data)+1;
+	this->length = strlen(rhs.data);
 	}	
 
 	return *this;
@@ -108,7 +108,7 @@ void String::split(const char *delimiters, String **output, size_t *size) const{
 	 			(*output)[index] =String(&tmp[left]);
 	 			left = j+1;
 	 			index+=1;
-	 			cout<<length<<endl;
+	 			
 
 	 		}else if ('\0' == tmp[j+1]){
 	 			(*output)[index] =String(&tmp[left]);
@@ -121,6 +121,9 @@ void String::split(const char *delimiters, String **output, size_t *size) const{
 }
 
 int String::to_integer() const{
+	if(data == NULL){
+ 		return 0;
+ 	}
 	return atoi(this->data);
 }
 
@@ -131,13 +134,15 @@ int String::to_integer() const{
  	char tmp[length];
 	strcpy(tmp,data);
 	int counterLeft = 0;
-	int counterRight = 0;
+	int counterRight = (this->length);
 	for (int i = 0; tmp[i] == ' '; i++){
 		counterLeft+=1;
+		cout<<"counterleft for loop"<<endl;
 	}
 
 	for (int i = length-1; tmp[i] == ' '; i--){
-		counterRight+=1;
+		counterRight-=1;
+		cout<<"counterRight for loop"<<endl;
 	}
 
 	tmp[counterRight] = '\0';

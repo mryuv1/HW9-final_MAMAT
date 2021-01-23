@@ -3,7 +3,7 @@
 #include "string.h"
 #include "field.h"
 #include "ip.h"
-
+#include <bitset>
 using namespace std;
 
 
@@ -30,7 +30,7 @@ bool Ip::set_value(String val){
 
 	packet[0].split(&delimiters, &subPackets, &sizes);
 
-	if (sizes != 2){
+	if (sizes != 4){
 		delete []subPackets;
 		delete []packet;
 		return false;
@@ -39,24 +39,27 @@ bool Ip::set_value(String val){
 	unsigned int tmp = 0;
 	int shifter = 24;
 	for(int i = 0; i < 4; i++){
-		int seg = subPackets[i].to_integer();
+		cout<<"tmp is: "<<bitset<32>(tmp)<<endl;
+		int seg = subPackets[i].trim().to_integer();
+		cout<<"seg is: "<<seg<<endl;
 		tmp += (seg << shifter);
 		shifter -= 8;		
 	}
 
-	shifter = 24;
+	shifter = 31;
 	unsigned int lowFilter = 0;
 	unsigned int highFilter = 0xFFFFFFFF;
-	for(int i = 0; i < packet[1].to_integer(); i++){
+	for(int i = 0; i < packet[1].trim().to_integer(); i++){
 		lowFilter += (0x1 << shifter);
 		highFilter = (highFilter >> 1);
 		shifter -= 1;		
 	}
 
 	
-	low = tmp & shifter;
+	low = tmp & lowFilter;
 	high = low + highFilter;
-
+	cout<<"the low is: "<<bitset<32>(low)<<", and the high is: "<< bitset<32>(high)<<endl;
+	cout<<"the low is: "<<low<<", and the high is: "<< high<<endl;
 	delete []subPackets;
 	delete []packet;
 
@@ -64,10 +67,33 @@ bool Ip::set_value(String val){
 }
 
 bool Ip::match_value(String val) const{
-	unsigned int value = (unsigned int)val.to_integer();
 
-	if (value > low && value < high){
+	char delimiters = '.';
+	String *subPackets;
+	size_t sizes;
+
+	val.split(&delimiters, &subPackets, &sizes);
+
+	if (sizes != 4){
+		delete []subPackets;
+		return false;
+	}
+
+	unsigned int value = 0;
+	int shifter = 24;
+	for(int i = 0; i < 4; i++){
+		cout<<"value is: "<<bitset<32>(value)<<endl;
+		int seg = subPackets[i].trim().to_integer();
+		cout<<"seg is: "<<seg<<endl;
+		value += (seg << shifter);
+		shifter -= 8;		
+	}
+	
+
+	if (value >= low && value <= high){
+		delete []subPackets;
 		return true;
 	}
+	delete []subPackets;
 	return false;
 }
