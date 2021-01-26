@@ -5,6 +5,7 @@
 #include "port.h"
 #include "field.h"
 
+using namespace std;
 
 Field::Field(String pattern, field_type type):pattern(pattern), type(type){}
 
@@ -18,6 +19,7 @@ field_type Field::get_type() const{
 
 bool Field::set_value(String val){
 	if(type == IP){
+	//	cout<<"HERE ######## - FIELD - SET VALUE____IP"<<endl;
 		return ((Ip*)this)->set_value(val);
 	}else if (type == PORT){
 		return ((Port*)this)->set_value(val);
@@ -26,9 +28,11 @@ bool Field::set_value(String val){
 	return false;
 }
  bool Field::match_value(String val) const{
+ 	//cout<<"HERE &&&&&&&&&&&&&&&&"<<endl;
  	if(type == IP){
 		return ((Ip*)this)->match_value(val);
 	}else if (type == PORT){
+		//cout<<"HERE 777777777777777"<<endl;
 		return ((Port*)this)->match_value(val);
 	}
 
@@ -36,50 +40,45 @@ bool Field::set_value(String val){
  }
 
  bool Field::match(String packet){
+ 	//cout<<"HERE 333333333333"<<endl;
 
- 	char delimiters = ',';
-	String *output;
+ 	
+	String *NEWoutput;
 	size_t size = 0;
 
-	packet.split(&delimiters, &output, &size);
+	
+	packet.split(",", &NEWoutput, &size);
 
-	delimiters = '=';
-
-	if (type == IP){
-
-		String *ipfirst;
-		String *ipSecond;
-		size_t ipFirstSize = 0;
-		size_t ipSecondSize = 0;
-
-		output[0].split(&delimiters, &ipfirst, &ipFirstSize);
-		output[1].split(&delimiters, &ipSecond, &ipSecondSize);
-		bool first = match_value(ipfirst[1]);
-		bool second = match_value(ipSecond[1]); //we may need ot use trim
-
+	/*if (size != 4){
 		delete []output;
-		delete []ipfirst;
-		delete []ipSecond;
-		return (first || second); // its enough that one of them is a match
+		return false;
+	}*/
+	//cout<<"---$$$$$$$$$$$--------------size is ------------"<< size <<endl;
+	
+	
+	bool result = false;
+	String *ip;
+			
+		for(unsigned int i = 0; i < size ; i++){
+			size_t ipSize = 0;
+	//		cout<<"HERE 7777777777777"<<" i is :"<<i<<endl;
+			NEWoutput[i].split("=", &ip, &ipSize);
 
-	}else if(type == PORT){
+			if(ipSize == 2 && pattern.equals(ip[0].trim())){
+			result = ( result || match_value(ip[1].trim()));
+			//cout<<"HERE 444444444444444"<<endl;
+	//		cout<<"HERE 55555555555555555"<<endl;
+            }
 
-		String *portfirst;
-		String *portSecond;
-		size_t portFirstSize = 0;
-		size_t portSecondSize = 0;
+            if(NULL != ip){
+            	delete []ip;
+				
+			}
+        }
+	
+	//cout<<"HERE END MATCH -- result is "<<result<<endl;
+	delete []NEWoutput;
+	
+	return result;
 
-		output[2].split(&delimiters, &portfirst, &portFirstSize);
-		output[3].split(&delimiters, &portSecond, &portSecondSize);
-		bool first = match_value(portfirst[1]);
-		bool second = match_value(portSecond[1]); //we may need ot use trim
-
-		delete []output;
-		delete []portfirst;
-		delete []portSecond;
-		return (first || second);
 	}
-
-	return false;
-
- }

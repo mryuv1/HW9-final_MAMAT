@@ -1,39 +1,60 @@
 
 #include <iostream>
 #include <cstring>
-#include<firewall>
-#include<input>
+
+#include "ip.h"
+#include "port.h"
+#include "input.h"
 
 using namespace std;
-extern int check_args(int,char*);
-extern void parse_input(Field&);
+
 
 #if 1
 
-int main(int argc, char *argv[]){
+int main(int argc, char **argv){
 	
-	if (check_args(argc,*argv) != 0){
-		cout<<"err_arg"<<endl;
+	if (check_args(argc,argv) != 0){
 		return 0;
 	}
 
-	String mask(argv[0]);
-	char delimiters[] = "-=";
+	
+	String mask(argv[1]);
+	
 	String *subMask;
 	size_t sizes;
+	//cout<<"HERE-----------------"<<endl;
+	mask.split("=", &subMask, &sizes);
 
-	mask.split(delimiters, &subMask, &sizes);
+	
+	String *kind;
+	size_t kindes;
+	//cout<<"size is-----------------"<<sizes<<endl	;
 
-	if(subMask[1].trim().equals(String("ip"))){
-		Ip maskIp(subMask[2]);
-		parse_input((Field&)maskIp);
-	}else if(subMask[1].trim().equals(String("port"))){
-		Port maskPort(subMask[2]);
-		parse_input((Field&)maskPort);
+	subMask[0].split("-", &kind, &kindes);
+
+	//cout<<"kindes is-----------------"<<kindes<<endl	;
+	
+	
+
+	
+	String compare = kind[1].trim();
+	if(compare.equals(String("ip"))){
+	//cout<<"HERE 000000"<<endl	;
+	Ip maskIp(subMask[0].trim());
+	//cout<<"HERE 11111111111"<<endl;	
+	maskIp.set_value(subMask[1].trim());
+	//cout<<"HERE 2222222222222"<<endl;
+	parse_input(maskIp);
+	
+	}else if(compare.equals(String("port"))){
+		Port maskPort(subMask[0].trim());
+		maskPort.set_value(subMask[1].trim());
+		
+		parse_input(maskPort);
 	}
 
 	delete []subMask;
-
+	delete []kind;
     return 0;
 }
 

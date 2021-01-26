@@ -8,29 +8,30 @@ using namespace std;
 
 
 Ip::Ip(String pattern):Field(pattern, IP){
-	cout<<"IP was created"<<endl;
 }
 
 bool Ip::set_value(String val){
 
-	char delimiters = '/';
+	//cout<<"SET VALUE IP--------------------"<<endl;
 	String *packet;
 	size_t packs = 0;
 
-	val.split(&delimiters, &packet, &packs);
+	val.split("/", &packet, &packs);
 
 	if (packs != 2){
+		//cout<<"packs arenot 2-------------"<<endl;
 		delete []packet;
 		return false;
 	}
 
-	delimiters = '.';
+
 	String *subPackets;
 	size_t sizes;
 
-	packet[0].split(&delimiters, &subPackets, &sizes);
+	packet[0].split(".", &subPackets, &sizes);
 
 	if (sizes != 4){
+	//	cout<<"sizes arenot 4-------------"<<endl;
 		delete []subPackets;
 		delete []packet;
 		return false;
@@ -39,9 +40,10 @@ bool Ip::set_value(String val){
 	unsigned int tmp = 0;
 	int shifter = 24;
 	for(int i = 0; i < 4; i++){
-		cout<<"tmp is: "<<bitset<32>(tmp)<<endl;
-		int seg = subPackets[i].trim().to_integer();
-		cout<<"seg is: "<<seg<<endl;
+	//	cout<<"tmp is: "<<bitset<32>(tmp)<<endl;
+		String pack = subPackets[i].trim();
+		int seg = pack.to_integer();
+	//	cout<<"seg is: "<<seg<<endl;
 		tmp += (seg << shifter);
 		shifter -= 8;		
 	}
@@ -49,7 +51,9 @@ bool Ip::set_value(String val){
 	shifter = 31;
 	unsigned int lowFilter = 0;
 	unsigned int highFilter = 0xFFFFFFFF;
-	for(int i = 0; i < packet[1].trim().to_integer(); i++){
+	String count = packet[1].trim();
+	int counter = count.to_integer();
+	for(int i = 0; i < counter; i++){
 		lowFilter += (0x1 << shifter);
 		highFilter = (highFilter >> 1);
 		shifter -= 1;		
@@ -58,8 +62,8 @@ bool Ip::set_value(String val){
 	
 	low = tmp & lowFilter;
 	high = low + highFilter;
-	cout<<"the low is: "<<bitset<32>(low)<<", and the high is: "<< bitset<32>(high)<<endl;
-	cout<<"the low is: "<<low<<", and the high is: "<< high<<endl;
+	//cout<<"the low is: "<<bitset<32>(low)<<", and the high is: "<< bitset<32>(high)<<endl;
+	//cout<<"the low is: "<<low<<", and the high is: "<< high<<endl;
 	delete []subPackets;
 	delete []packet;
 
@@ -68,11 +72,10 @@ bool Ip::set_value(String val){
 
 bool Ip::match_value(String val) const{
 
-	char delimiters = '.';
 	String *subPackets;
 	size_t sizes;
-
-	val.split(&delimiters, &subPackets, &sizes);
+	//cout<<"LAST OPTION__________________-"<<endl;
+	val.split(".", &subPackets, &sizes);
 
 	if (sizes != 4){
 		delete []subPackets;
@@ -82,16 +85,17 @@ bool Ip::match_value(String val) const{
 	unsigned int value = 0;
 	int shifter = 24;
 	for(int i = 0; i < 4; i++){
-		cout<<"value is: "<<bitset<32>(value)<<endl;
-		int seg = subPackets[i].trim().to_integer();
-		cout<<"seg is: "<<seg<<endl;
+	
+		int seg = subPackets[i].to_integer();
+	//	cout<<"seg is: "<<seg<<endl;
 		value += (seg << shifter);
 		shifter -= 8;		
 	}
 	
-
+		//cout<<"value is: "<<bitset<32>(value)<<endl;
 	if (value >= low && value <= high){
 		delete []subPackets;
+		
 		return true;
 	}
 	delete []subPackets;
