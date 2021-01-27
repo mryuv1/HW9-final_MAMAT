@@ -17,4 +17,4 @@ while read line; do
 	rm a1.out
 done  < rules
 rm rules 
-sort stdout |uniq > stdout
+sort stdout | uniq > stdout

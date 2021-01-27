@@ -1,12 +1,10 @@
 
-#!/bin/bash
-rules_file="$1" 
-packests="$2"
+#!/bin/bash	
 
 
 filtered=$(cat "$1"  | grep -E -o '^(([^#]))*' | tr -d ' ')  
 
-
+final=""
 
 for line in $filtered; do
 	
@@ -17,14 +15,33 @@ for line in $filtered; do
 	three=$(sed 's/,/ /'<<<$two)
 
 	read -a fields <<< $three
-	echo "${fields[0]}"
-	echo "${fields[1]}"
-	echo "${fields[2]}"
-	echo "${fields[3]}"
+	
 
 	
 	while read pack; do
-		echo $pack;
+		
+		#echo $pack;
+		final+=`echo -e "$pack" | ./firewall.exe  "${fields[0]}" 2>/dev/null | \
+			./firewall.exe  "${fields[1]}" 2>/dev/null | ./firewall.exe  "${fields[2]}"  2>/dev/null | \
+			./firewall.exe  "${fields[3]}" 2>/dev/null `
+		#check+="\n"
+		#check=`echo -e "$check" | uniq -c `
+		#check+=`echo -e "$pack" | ./firewall.exe  "${fields[1]}"  2>/dev/null`
+		#check+="\n"
+		#check=`echo -e "$check" | uniq -c `
+		#echo -e "$check" | uniq -c 
+		#check+=`echo -e "$pack" | ./firewall.exe  "${fields[2]}"  2>/dev/null`
+		#check+="\n"
+		#check=`echo -e "$check" | uniq -c `
+		#echo -e "$check" | uniq -c 
+		#check+=`echo -e "$pack" | ./firewall.exe  "${fields[3]}"  2>/dev/null`
+		#check+="\n"
+		#check=`echo -e "$check" | uniq -c `
+		#echo "${fields[1]}"
+		#echo "${fields[2]}"
+		#echo "${fields[3]}"
+		#final+=`echo -e "$check"` #`echo -e "$check" | uniq -c | grep -E  '(      4 )' | sed 's/4//' | tr -d ' '`
+		final+="\n"
 	done< "$2"
 	#while IFS= read -r line;
 	#echo $pack	
@@ -42,7 +59,7 @@ for line in $filtered; do
 	#done<test3-pkts.in
 done
 
-
+echo -ne $final | tr -d ' ' | sed '/^$/d' | sort
 
 #while IFS= read -r line;
 #do
